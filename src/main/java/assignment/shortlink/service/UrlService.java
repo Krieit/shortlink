@@ -1,5 +1,6 @@
 package assignment.shortlink.service;
 
+import assignment.shortlink.exception.UrlNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -26,6 +27,15 @@ public class UrlService {
         return BASE_URL + uniqueId;
     }
 
+    public String decode(String shortUrl) {
+        String uniqueId = shortUrl.replace(BASE_URL, "");
+        String originalUrl = urlMap.get(uniqueId);
+        if (originalUrl == null) {
+            throw new UrlNotFoundException("URL not found for: " + shortUrl);
+        }
+        return originalUrl;
+    }
+
     private String generateUniqueId() {
         String uniqueId;
         do {
@@ -42,4 +52,3 @@ public class UrlService {
         return uniqueId.toString();
     }
 }
-
