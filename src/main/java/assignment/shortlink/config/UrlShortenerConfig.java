@@ -3,6 +3,9 @@ package assignment.shortlink.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuration properties for the URL shortening service.
+ */
 @Configuration
 @ConfigurationProperties(prefix = "shortlink")
 public class UrlShortenerConfig {

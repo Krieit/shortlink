@@ -9,6 +9,9 @@ import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Service for encoding and decoding URLs.
+ */
 @Service
 public class UrlService {
 
@@ -26,6 +29,12 @@ public class UrlService {
         this.shortUrlLength = config.getShortUrlLength();
     }
 
+    /**
+     * Encodes a URL to a shortened URL.
+     *
+     * @param url the original URL
+     * @return the shortened URL
+     */
     public String encode(String url) {
         if (reverseUrlMap.containsKey(url)) {
             return baseUrl + reverseUrlMap.get(url);
@@ -36,6 +45,13 @@ public class UrlService {
         return baseUrl + uniqueId;
     }
 
+    /**
+     * Decodes a shortened URL to its original URL.
+     *
+     * @param shortUrl the shortened URL
+     * @return the original URL
+     * @throws UrlNotFoundException if the shortened URL does not exist
+     */
     public String decode(String shortUrl) {
         String uniqueId = shortUrl.replace(baseUrl, "");
         String originalUrl = urlMap.get(uniqueId);
@@ -45,6 +61,11 @@ public class UrlService {
         return originalUrl;
     }
 
+    /**
+     * Generates a unique ID for the shortened URL.
+     *
+     * @return a unique ID
+     */
     private String generateUniqueId() {
         String uniqueId;
         do {
@@ -53,6 +74,11 @@ public class UrlService {
         return uniqueId;
     }
 
+    /**
+     * Generates a random string of the configured length.
+     *
+     * @return a random string
+     */
     private String randomString() {
         StringBuilder uniqueId = new StringBuilder(shortUrlLength);
         for (int i = 0; i < shortUrlLength; i++) {
@@ -61,4 +87,4 @@ public class UrlService {
         return uniqueId.toString();
     }
 
-   }
+}
