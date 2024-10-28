@@ -1,6 +1,8 @@
 package assignment.shortlink.service;
 
+import assignment.shortlink.config.UrlShortenerConfig;
 import assignment.shortlink.exception.UrlNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -12,23 +14,30 @@ public class UrlService {
 
     private final Map<String, String> urlMap = new HashMap<>();
     private final Map<String, String> reverseUrlMap = new HashMap<>();
-    private static final String BASE_URL = "http://short.est/";
     private static final String CHARSET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    private static final int SHORT_URL_LENGTH = 6;
     private final SecureRandom random = new SecureRandom();
+
+    private final String baseUrl;
+    private final int shortUrlLength;
+
+    @Autowired
+    public UrlService(UrlShortenerConfig config) {
+        this.baseUrl = config.getBaseUrl();
+        this.shortUrlLength = config.getShortUrlLength();
+    }
 
     public String encode(String url) {
         if (reverseUrlMap.containsKey(url)) {
-            return BASE_URL + reverseUrlMap.get(url);
+            return baseUrl + reverseUrlMap.get(url);
         }
         String uniqueId = generateUniqueId();
         urlMap.put(uniqueId, url);
         reverseUrlMap.put(url, uniqueId);
-        return BASE_URL + uniqueId;
+        return baseUrl + uniqueId;
     }
 
     public String decode(String shortUrl) {
-        String uniqueId = shortUrl.replace(BASE_URL, "");
+        String uniqueId = shortUrl.replace(baseUrl, "");
         String originalUrl = urlMap.get(uniqueId);
         if (originalUrl == null) {
             throw new UrlNotFoundException("URL not found for: " + shortUrl);
@@ -45,10 +54,11 @@ public class UrlService {
     }
 
     private String randomString() {
-        StringBuilder uniqueId = new StringBuilder(SHORT_URL_LENGTH);
-        for (int i = 0; i < SHORT_URL_LENGTH; i++) {
+        StringBuilder uniqueId = new StringBuilder(shortUrlLength);
+        for (int i = 0; i < shortUrlLength; i++) {
             uniqueId.append(CHARSET.charAt(random.nextInt(CHARSET.length())));
         }
         return uniqueId.toString();
     }
-}
+
+   }
